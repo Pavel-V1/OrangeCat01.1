@@ -23,5 +23,6 @@ class Main {
             }
         }
 //        System.out.println(list);
+        //https://docs.google.com/document/u/0/d/1eCEbv62df8ggqUgevpAdTFwWTbgfHe79-WUBVP3x9q8/mobilebasic
     }
 }
