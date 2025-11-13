@@ -18,16 +18,19 @@ class Main {
             bpTree.add(id);
         }
 
+        for (ArrayList<String> arr : hashMap.values()) {
+            System.out.println(arr.get(0));
+        }
     }
 
-    public ArrayList<String> getMovieFromRealiseDate(String smallestDate, String largestDate, BPlusTree bpTree) {
-        for (int i = 0; i < smallestDate.length(); i++) {
-            char j = smallestDate.charAt(i);
-            char k = largestDate.charAt(i);
+    public ArrayList<String> getMovieFromRealiseDate(String lowestDate, String highestDate, BPlusTree bpTree) {
+        for (int i = 0; i < lowestDate.length(); i++) {
+            char j = lowestDate.charAt(i);
+            char k = highestDate.charAt(i);
             if (j > k) {
-                String str = smallestDate;
-                smallestDate = largestDate;
-                largestDate = str;
+                String str = lowestDate;
+                lowestDate = highestDate;
+                highestDate = str;
                 break;
             }
         }
@@ -43,9 +46,9 @@ class Main {
         return movies;
     }
 
-    public ArrayList<String> getMovieFromBothParameters(String smallestDate, String largestDate,
+    public ArrayList<String> getMovieFromBothParameters(String lowestDate, String highestDate,
                                                         String lowestAvgVote, String highestAvgVote, BPlusTree bpTree) {
-        ArrayList<String> movie_array = getMovieFromRealiseDate(smallestDate, largestDate, bpTree);
+        ArrayList<String> movie_array = getMovieFromRealiseDate(lowestDate, highestDate, bpTree);
         // взять фильмы подходящие по дате
         ArrayList<String> movies = new ArrayList<>();
         // сюда передать из movie_array фильмы подходящие по оценке

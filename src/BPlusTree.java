@@ -43,7 +43,14 @@ public class BPlusTree {
         }
     }
 
-    public int Lookup() {
+    public BPTNode Lookup(int k) {
+        BPTNode cur = root;
+        //
+        return null;
+    }
 
+    public BPTNode Lookup(int a, int b) {
+        //
+        return null;
     }
 }
