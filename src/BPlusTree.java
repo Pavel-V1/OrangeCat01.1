@@ -42,4 +42,8 @@ public class BPlusTree {
             }
         }
     }
+
+    public int Lookup() {
+
+    }
 }
