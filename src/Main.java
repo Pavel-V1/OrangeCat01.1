@@ -6,20 +6,28 @@ class Main {
         CSV_File_Reader_Class csvFileReaderClass = new CSV_File_Reader_Class();
         HashMap<Integer, ArrayList<String>> hashMap = csvFileReaderClass.CSVFileReader();
 
-        // Надо реализовать чтение из файла с помощью CSV-читателя (найти),
-        // в словарь ключами определить "id", сделать В+_дерево,
-        // создание дерева и ключей-маршрутизаторов в оперативной памяти,
-        // в долговременной хранятся файлы с настоящими ключами - "id",
-        // найти настоящие ключи ("id") по маршрутизаторам (индексам);
-        // по "id" лезть в словарь и доставать данные.
+        BPlusTree dateBPTree = new BPlusTree();
+        BPlusTree voteBPTree = new BPlusTree();
 
-        BPlusTree bpTree = new BPlusTree();
-        for (int id : hashMap.keySet()) {
-            bpTree.add(id);
-        }
+        for (ArrayList<String> arrayList : hashMap.values()) {
+            String dateString = arrayList.getFirst();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (char c : dateString.toCharArray()) {
+                boolean ok = true;
+                try {
+                    int tryingToGetValueFromChar = Integer.parseInt(String.valueOf(c));
+                } catch (Exception e) {
+                    ok = false;
+                }
+                if (ok) {
+                    stringBuilder.append(c);
+                }
+            }
+            int date = Integer.parseInt(stringBuilder.toString());
+            float avgVote = Float.parseFloat(arrayList.get(1));
 
-        for (ArrayList<String> arr : hashMap.values()) {
-            System.out.println(arr.get(0));
+            dateBPTree.add(date);
+            voteBPTree.add(avgVote);
         }
     }
 

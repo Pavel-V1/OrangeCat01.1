@@ -31,7 +31,7 @@ public class CSV_File_Reader_Class {
                 for (String col : row) {
                     counter++;
                     if (counter == 2 && !col.equals("id")) {
-                        if (col.equals("")) {
+                        if (col.isEmpty()) {
                             continue;
                         }
                         int_col = Integer.parseInt(col);
