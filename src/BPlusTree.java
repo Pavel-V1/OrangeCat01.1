@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class BPlusTree<Num extends Number> {
+    int t = 2;
     protected class BPTNode {
         int n;
         ArrayList<Num> value;
@@ -48,18 +49,23 @@ public class BPlusTree<Num extends Number> {
         if (bptNode == null) {
             return null;
         } else {
-            BPTNode cur = bptNode;
             int counter = 0;
             BPTNode result = null;
-            for (Num cv : cur.value) {
+            for (Num cv : bptNode.value) {
+                if (cv.equals(bptNode.value.getLast()) && comp.compare(cv, value) < 0) {
+                    result = lookUp(value, bptNode.child.get(counter + 1)); // (n+1)-ый
+                    break;
+                }
                 if (comp.compare(cv, value) < 0) {
                     counter++;
                     continue;
-                } else if (!cur.isLeaf) {
-                    result = lookUp(value, cur.child.get(counter));
-                } else {
-                    break;
                 }
+                if (bptNode.isLeaf) {
+                    result = bptNode;
+                } else {
+                    result = lookUp(value, bptNode.child.get(counter));
+                }
+                break;
             }
             return result;
         }
@@ -86,14 +92,27 @@ public class BPlusTree<Num extends Number> {
             root.value.add(value);
         } else {
             BPTNode bptNode = lookUp(value, root);
-            //
+            if (bptNode.value.size() < 2 * t - 1) {
+                int counter = 0;
+                for (Num v : bptNode.value) {
+                    if (comp.compare(v, value) >= 0) {
+                        bptNode.value.add(counter, value);
+                    } else if (v.equals(bptNode.value.getLast())) {
+                        bptNode.value.addLast(value);
+                    } else {
+                        counter++;
+                    }
+                }
+            } else {
+                Num median = splitNode(bptNode);
+
+            }
         }
     }
 
-    private void splitNode(BPTNode bptNode) {
-        if (bptNode != null) {
-            //
-        }
+    private Num splitNode(BPTNode bptNode) {
+
+        return median;
     }
 
 //    public boolean delete(Num value) {
