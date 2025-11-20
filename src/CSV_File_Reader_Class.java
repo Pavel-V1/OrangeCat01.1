@@ -25,22 +25,24 @@ public class CSV_File_Reader_Class {
 
         HashMap<Integer, ArrayList<String>> hashMap = new HashMap<>();
         try {
+            int c = 0;
             for (String[] row : csvReader.readAll()) {
+                c++;
                 int counter = 0;
-                int int_col = 0;
+                int idCol = 0;
                 for (String col : row) {
                     counter++;
-                    if (counter == 2 && !col.equals("id")) {
+                    if (c != 1 && counter == 2) {
                         if (col.isEmpty()) {
                             continue;
                         }
-                        int_col = Integer.parseInt(col);
-                        hashMap.put(int_col, new ArrayList<>());
-                    } else if (int_col != 0) {
-                        if (counter == 8 && !col.equals("realise_date")) {
-                            hashMap.get(int_col).add(col);
-                        } else if (counter == 12 && !col.equals("vote_average")) {
-                            hashMap.get(int_col).add(col);
+                        idCol = Integer.parseInt(col);
+                        hashMap.put(idCol, new ArrayList<>());
+                    } else if (c != 1) {
+                        if (counter == 4 || counter == 8 || counter == 10 || counter == 11 ||
+                            counter == 12 || counter == 16 || counter == 17 || counter == 19) {
+
+                            hashMap.get(idCol).add(col);
                         }
                     }
                 }
