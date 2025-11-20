@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CSV_File_Reader_Class {
-    public HashMap<Integer, ArrayList<String>> CSVFileReader() {
+    public HashMap<Integer, ArrayList<String>> CSVFileReaded() {
         FileReader fileReader = null;
         try {
             fileReader = new FileReader("horror_movies.csv");

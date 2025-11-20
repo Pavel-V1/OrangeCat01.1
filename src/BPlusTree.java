@@ -1,19 +1,20 @@
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Objects;
 
 public class BPlusTree<Num extends Number> {
-    int t = 2;
-
     protected class BPTNode {
+        int n;
         ArrayList<Num> value;
         ArrayList<BPTNode> child;
         boolean isLeaf;
+        BPTNode next;
 
-        BPTNode(ArrayList<Num> value, ArrayList<BPTNode> child, boolean isLeaf) {
+        BPTNode(ArrayList<Num> value, BPTNode next) {
             this.value = value;
-            this.child = child;
-            this.isLeaf = isLeaf;
+            this.child = new ArrayList<BPTNode>();
+            this.isLeaf = true;
+            this.n = value.size();
+            this.next = next;
         }
 
         public ArrayList<Num> getValue() {
@@ -43,32 +44,54 @@ public class BPlusTree<Num extends Number> {
         this.root = null;
     }
 
+    protected BPTNode lookUp(Num value, BPTNode bptNode) {
+        if (bptNode == null) {
+            return null;
+        } else {
+            BPTNode cur = bptNode;
+            int counter = 0;
+            BPTNode result = null;
+            for (Num cv : cur.value) {
+                if (comp.compare(cv, value) < 0) {
+                    counter++;
+                    continue;
+                } else if (!cur.isLeaf) {
+                    result = lookUp(value, cur.child.get(counter));
+                } else {
+                    break;
+                }
+            }
+            return result;
+        }
+    }
+
+    public Num search(Num value) {
+        return lookUp(value, root).value.get(0);
+    }
+
+    public ArrayList<Num> search(Num a, Num b) {
+        BPTNode bptNode = lookUp(a, root);
+        Num i = a;
+        ArrayList<Num> numArrayList = new ArrayList<>();
+        while (comp.compare(i, b) <= 0) {
+            numArrayList.add(i);
+            i = bptNode.next.value.get(0);
+        }
+        return numArrayList;
+    }
+
     public void add(Num value) {
         if (root == null) {
-            root = new BPTNode(new ArrayList<>(), null, true);
+            root = new BPTNode(new ArrayList<>(), null);
             root.value.add(value);
         } else {
-            Integer v = search(value);
+            BPTNode bptNode = lookUp(value, root);
             //
         }
     }
 
-    public Integer search(Num value) {
-        if (root == null) {
-            return null;
-        } else {
-            BPTNode cur = root;
-            for (Num cv : cur.value) {
-                //
-            }
-        }
-    }
-
-    public ArrayList<Integer> search(Num a, Num b) {
-        Integer startID = search(a);
-        if (startID == null) {
-            return null;
-        } else {
+    private void splitNode(BPTNode bptNode) {
+        if (bptNode != null) {
             //
         }
     }
@@ -84,10 +107,6 @@ public class BPlusTree<Num extends Number> {
 //        } catch (Exception e) {
 //            return false;
 //        }
-//    }
-//
-//    private Num add1(Num i) {
-//        return comp.compare(i, -1);
 //    }
 //
 //    public boolean delete(Num a, Num b) {
