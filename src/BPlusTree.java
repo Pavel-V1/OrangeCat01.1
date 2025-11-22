@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 public class BPlusTree<Num extends Number> {
     int t = 2;
@@ -8,14 +9,12 @@ public class BPlusTree<Num extends Number> {
         ArrayList<Num> value;
         ArrayList<BPTNode> child;
         boolean isLeaf;
-        BPTNode next;
 
-        BPTNode(ArrayList<Num> value, BPTNode next) {
+        BPTNode(ArrayList<Num> value, Num next) {
             this.value = value;
             this.child = new ArrayList<BPTNode>();
             this.isLeaf = true;
             this.n = value.size();
-            this.next = next;
         }
 
         public ArrayList<Num> getValue() {
@@ -26,6 +25,8 @@ public class BPlusTree<Num extends Number> {
             return child;
         }
     }
+
+    LinkedList<Num> numLinkedList = new LinkedList<>();
 
     Comparator<Num> comp = new Comparator<Num>() {
         @Override
@@ -78,18 +79,22 @@ public class BPlusTree<Num extends Number> {
     public ArrayList<Num> search(Num a, Num b) {
         BPTNode bptNode = lookUp(a, root);
         Num i = a;
-        ArrayList<Num> numArrayList = new ArrayList<>();
+        ArrayList<Num> arrayList = new ArrayList<>();
         while (comp.compare(i, b) <= 0) {
-            numArrayList.add(i);
-            i = bptNode.next.value.get(0);
+            arrayList.add(i);
+            i = numLinkedList.get(numLinkedList.indexOf(i) + 1);
         }
-        return numArrayList;
+        return arrayList;
     }
 
     public void add(Num value) {
-        if (root == null) {
-            root = new BPTNode(new ArrayList<>(), null);
-            root.value.add(value);
+        add(value, root);
+    }
+
+    private void add(Num value, BPTNode node) {
+        if (node == null) {
+            node = new BPTNode(new ArrayList<>(), null);
+            node.value.add(value);
         } else {
             BPTNode bptNode = lookUp(value, root);
             if (bptNode.value.size() < 2 * t - 1) {
@@ -103,26 +108,30 @@ public class BPlusTree<Num extends Number> {
                         counter++;
                     }
                 }
+                int c = 0;
+                for (Num i : bptNode.value) {
+                    if (i.equals(value)) {
+                        break;
+                    } else {
+                        c++;
+                    }
+                }
+                numLinkedList.add(numLinkedList.indexOf(bptNode.value.getFirst()) + c, value);
             } else {
-                Num median = splitNode(bptNode);
 
             }
         }
-    }
-
-    private Num splitNode(BPTNode bptNode) {
-
-        return median;
     }
 
 //    public boolean delete(Num value) {
 //        try {
 //            Integer v = search(value);
 //            //
-//            ListNode d = cur.next.prev;
-//            cur.next = cur.next.next;
-//            cur.next.prev = d;
-//            return true;
+//
+//            //ListNode d = cur.next.prev;
+//            //cur.next = cur.next.next;
+//            //cur.next.prev = d;
+//            //return true;
 //        } catch (Exception e) {
 //            return false;
 //        }
@@ -130,12 +139,9 @@ public class BPlusTree<Num extends Number> {
 //
 //    public boolean delete(Num a, Num b) {
 //        boolean bool = true;
-//        for (Num i = a; comp.compare(i, b) >= 0; add1(i)) {
-//            boolean del_bool = delete(i);
-//            if (!del_bool) {
-//                bool = false;
-//                break;
-//            }
+//        ArrayList<Num> idArray = search(a, b);
+//        for (Num umnum : idArray) {
+//            delete(umnum);
 //        }
 //        return bool;
 //    }
