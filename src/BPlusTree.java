@@ -46,7 +46,7 @@ public class BPlusTree {
             this.isLeaf = true;
             this.n = keys.size();
             this.next = next;
-            this.idKey = null;
+            this.idKey = new ArrayList<>();
         }
 
         public ArrayList<Float> getKeys() {
@@ -76,20 +76,43 @@ public class BPlusTree {
         if (bptNode == null) {
             return null;
         } else {
-            int counter = 0;
+            BPTNode result = null;
+//            int counter = 0;
+//            for (Float curv : bptNode.keys) {
+//                if (curv.equals(bptNode.keys.get(bptNode.n - 1)) && curv < value) {
+//                    result = lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
+////                    result = lookUp(value, bptNode.children.get(bptNode.n));
+//                    break;
+//                }
+//                if (curv < value) {
+//                    counter++;
+//                    continue;
+//                }
+//                if (bptNode.isLeaf && curv.equals(value)) {
+//                    result = bptNode;
+//                } else {
+//                    result = lookUp(value, bptNode.children.get(counter));   // govno - peredelivayu
+//                }
+//                break;
+//            }
+
             for (Float curv : bptNode.keys) {
-                if (curv.equals(bptNode.keys.get(bptNode.n - 1)) && curv < value) {
-                    return lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
-//                    result = lookUp(value, bptNode.children.get(bptNode.n));
-                } else if (curv < value) {
-                    counter++;
-                    continue;
-                } else if (bptNode.isLeaf && curv.equals(value)) {
-                    return bptNode;
+                if (bptNode.isLeaf) {
+                    if (curv.equals(value)) {
+                        return bptNode;
+                    } else if (curv > value) {
+                        break;
+                    }
                 } else {
-                    return lookUp(value, bptNode.children.get(counter));
+                    if (curv >= value) {
+                        result = lookUp(value, bptNode.children.get(bptNode.keys.indexOf(curv)));
+                    } else if (curv.equals(bptNode.keys.get(bptNode.n - 1))) {
+                        result = lookUp(value, bptNode.children.get(bptNode.n - 1));
+                    }
                 }
+                break;
             }
+            return result;
         }
     }
 
@@ -104,15 +127,19 @@ public class BPlusTree {
             b = f;
         }
         BPTNode bptNode = lookUp(a, root);
-        if (bptNode = null) {
+        if (bptNode == null) {
             return null;
         }
         OrangeMeowBucket meow = bptNode.idKey.get(bptNode.keys.indexOf(a));
         ArrayList<Integer> arr = new ArrayList<>();
         while (meow.key <= b) {
             arr.add(meow.value);
-            if (meow.equals(bptNode.idKey.get(bptNode.n - 1))) {
-                meow = bptNode.next.idKey.getFirst();
+            if (meow.equals(bptNode.idKey.get(bptNode.idKey.size() - 1))) {
+                if (bptNode.next != null) {
+                    meow = bptNode.next.idKey.get(0);
+                } else {
+                    break;
+                }
             } else {
                 meow = bptNode.idKey.get(bptNode.idKey.indexOf(meow) + 1);
             }
@@ -132,21 +159,19 @@ public class BPlusTree {
             if (root == null) {
                 root = node;
             } else {
+                root.children.add(node);
+                root.keys.add(value);
+                root.n += 1;
                 boolean isFull = root.n == 2 * t - 1;
-                for (Float key : root.getKeys()) {
-                    if (key > value) {
-                        root.children.add(root.keys.indexOf(key), node);
-                        break;
-                    }
+
+                if (!node.equals(root.children.get(root.children.size() - 1))) {
+                    node.next = root.children.get(root.children.indexOf(node) + 1);
+                }
+                if (root.children.indexOf(node) > 0) {
+                    root.children.get(root.children.indexOf(node) - 1).next = node;
                 }
                 if (isFull) {
                     split(root);
-                }
-                if (node != root.children.get(root.n - 1)) {
-                    node.next = root.children.get(root.children.indexOf(node) + 1);
-                }
-                if (node != root.children.getFirst()) {
-                    root.children.get(root.children.indexOf(node) - 1).next = node;
                 }
             }
         } else {
@@ -173,14 +198,16 @@ public class BPlusTree {
         valueFromId.put(id, value);
     }
 
-    private void split(BPTNode bptNode) {
-        BPTNode bptNode2 = new BPTNode(new ArrayList<>(), new ArrayList<>(), bptNode, bptNode.next);
-        BPTNode bptNode1 = new BPTNode(new ArrayList<>(), new ArrayList<>(), bptNode, bptNode2);
-        bptNode.parent.children.get(bptNode.parent.children.indexOf(bptNode) - 1).next = bptNode1;
+    private void split(BPTNode node) {
+        BPTNode bptNode2 = new BPTNode(new ArrayList<>(), new ArrayList<>(), node, node.next);
+        BPTNode bptNode1 = new BPTNode(new ArrayList<>(), new ArrayList<>(), node, bptNode2);
+        if (node.parent != null && node.parent.children.indexOf(node) > 0) {
+            node.parent.children.get(node.parent.children.indexOf(node) - 1).next = bptNode1;
+        }
 
         int c = 0;
         Float keyMedium = null;
-        for (Float key : bptNode.keys) {
+        for (Float key : node.keys) {
             c++;
             if (c > t) {
                 keyMedium = key;
@@ -188,10 +215,10 @@ public class BPlusTree {
             }
             bptNode1.keys.add(key);
         }
-        if (!bptNode.isLeaf) {
+        if (!node.isLeaf) {
             bptNode1.isLeaf = false;
-            for (BPTNode child : bptNode.children) {
-                if (bptNode.children.indexOf(child) + 1 > t) {
+            for (BPTNode child : node.children) {
+                if (node.children.indexOf(child) + 1 > t) {
                     break;
                 }
                 bptNode1.children.add(child);
@@ -200,15 +227,15 @@ public class BPlusTree {
         }
         bptNode1.n = bptNode1.keys.size();
 
-        for (Float key : bptNode.keys) {
+        for (Float key : node.keys) {
             if (key >= keyMedium) {
                 bptNode2.keys.add(key);
             }
         }
-        if (!bptNode.isLeaf) {
+        if (!node.isLeaf) {
             bptNode2.isLeaf = false;
-            for (BPTNode child : bptNode.children) {
-                if (bptNode.children.indexOf(child) + 1 > t) {
+            for (BPTNode child : node.children) {
+                if (node.children.indexOf(child) + 1 > t) {
                     bptNode2.children.add(child);
                     child.parent = bptNode2;
                 }
@@ -216,22 +243,24 @@ public class BPlusTree {
         }
         bptNode2.n = bptNode2.keys.size();
 
-        if (bptNode.parent != null) {
-            bptNode1.parent = bptNode.parent;
-            bptNode2.parent = bptNode.parent;
-            int i = bptNode.parent.children.indexOf(bptNode);
-            bptNode.parent.keys.add(i, keyMedium);
-            bptNode.parent.n = bptNode.parent.keys.size();
-            bptNode.parent.children.remove(i);
-            bptNode.parent.children.add(i, bptNode1);
-            bptNode.parent.children.add(i + 1, bptNode2);
-        } else {
+        if (node.parent == null) {
             root = new BPTNode(new ArrayList<>(), new ArrayList<>(), null, null);
+            bptNode1.parent = root;
+            bptNode2.parent = root;
             root.children.add(bptNode1);
             root.children.add(bptNode2);
-            root.keys.add(keyMedium);
+            root.keys.add(0, bptNode2.keys.get(0));
             root.n = 1;
             root.isLeaf = false;
+        } else {
+            bptNode1.parent = node.parent;
+            bptNode2.parent = node.parent;
+            int i = node.parent.children.indexOf(node);
+            node.parent.keys.add(i, keyMedium);
+            node.parent.n = node.parent.keys.size();
+            node.parent.children.remove(i);
+            node.parent.children.add(i, bptNode1);
+            node.parent.children.add(i + 1, bptNode2);
         }
 
         if (bptNode1.parent.n == 2 * t - 1) {
