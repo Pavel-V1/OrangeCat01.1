@@ -77,24 +77,19 @@ public class BPlusTree {
             return null;
         } else {
             int counter = 0;
-            BPTNode result = null;
             for (Float curv : bptNode.keys) {
                 if (curv.equals(bptNode.keys.get(bptNode.n - 1)) && curv < value) {
-                    result = lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
+                    return lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
 //                    result = lookUp(value, bptNode.children.get(bptNode.n));
-                    break;
                 } else if (curv < value) {
                     counter++;
                     continue;
                 } else if (bptNode.isLeaf && curv.equals(value)) {
-                    result = bptNode;
-                    break;
+                    return bptNode;
                 } else {
-                    result = lookUp(value, bptNode.children.get(counter));
-                    break;
+                    return lookUp(value, bptNode.children.get(counter));
                 }
             }
-            return result;
         }
     }
 
@@ -109,6 +104,9 @@ public class BPlusTree {
             b = f;
         }
         BPTNode bptNode = lookUp(a, root);
+        if (bptNode = null) {
+            return null;
+        }
         OrangeMeowBucket meow = bptNode.idKey.get(bptNode.keys.indexOf(a));
         ArrayList<Integer> arr = new ArrayList<>();
         while (meow.key <= b) {
