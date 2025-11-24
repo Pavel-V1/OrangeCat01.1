@@ -92,6 +92,7 @@ public class BPlusTree {
                     result = bptNode;
                 } else {
                     result = lookUp(value, bptNode.children.get(counter));
+                    break;
                 }
                 break;
             }
