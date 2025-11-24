@@ -83,18 +83,16 @@ public class BPlusTree {
                     result = lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
 //                    result = lookUp(value, bptNode.children.get(bptNode.n));
                     break;
-                }
-                if (curv < value) {
+                } else if (curv < value) {
                     counter++;
                     continue;
-                }
-                if (bptNode.isLeaf && curv.equals(value)) {
+                } else if (bptNode.isLeaf && curv.equals(value)) {
                     result = bptNode;
+                    break;
                 } else {
                     result = lookUp(value, bptNode.children.get(counter));
                     break;
                 }
-                break;
             }
             return result;
         }
