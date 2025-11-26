@@ -81,7 +81,7 @@ public class BPlusTree {
 //            for (Float curv : bptNode.keys) {
 //                if (curv.equals(bptNode.keys.get(bptNode.n - 1)) && curv < value) {
 //                    result = lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
-////                    result = lookUp(value, bptNode.children.get(bptNode.n));
+//  //                  result = lookUp(value, bptNode.children.get(bptNode.n));
 //                    break;
 //                }
 //                if (curv < value) {
@@ -91,7 +91,7 @@ public class BPlusTree {
 //                if (bptNode.isLeaf && curv.equals(value)) {
 //                    result = bptNode;
 //                } else {
-//                    result = lookUp(value, bptNode.children.get(counter));   // govno - peredelivayu
+//                    result = lookUp(value, bptNode.children.get(counter));
 //                }
 //                break;
 //            }
