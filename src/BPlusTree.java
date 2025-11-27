@@ -77,25 +77,6 @@ public class BPlusTree {
             return null;
         } else {
             BPTNode result = null;
-//            int counter = 0;
-//            for (Float curv : bptNode.keys) {
-//                if (curv.equals(bptNode.keys.get(bptNode.n - 1)) && curv < value) {
-//                    result = lookUp(value, bptNode.children.get(counter + 1)); // (n+1)-ый
-//  //                  result = lookUp(value, bptNode.children.get(bptNode.n));
-//                    break;
-//                }
-//                if (curv < value) {
-//                    counter++;
-//                    continue;
-//                }
-//                if (bptNode.isLeaf && curv.equals(value)) {
-//                    result = bptNode;
-//                } else {
-//                    result = lookUp(value, bptNode.children.get(counter));
-//                }
-//                break;
-//            }
-
             for (Float curv : bptNode.keys) {
                 if (bptNode.isLeaf) {
                     if (curv.equals(value)) {
@@ -296,6 +277,9 @@ public class BPlusTree {
         }
         boolean bool = true;
         ArrayList<Integer> idArray = search(a, b);
+        if (idArray == null) {
+            return false;
+        }
         for (Integer umnum : idArray) {
             bool = delete(umnum);
             if (!bool) {

@@ -24,82 +24,90 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Программа готова, шаблоны ввода: {date/vote/date-vote} {ГГГГ-ММ-ДД} {x/x.x}");
-//        while (!scanner.nextLine().equalsIgnoreCase("stop")) {
-//            String[] s = scanner.nextLine().split(" ");
-//            ArrayList<Integer> movies = null;
-//            if (s[0].equals("date")) {
-//                System.out.println("Обработка...");
-//                if (s.length < 2) {
-//                    System.out.println("Некорректный ввод");
-//                    continue;
-//                }
-//                String a = s[1];
-//                if (s.length >= 3) {
-//                    String b = s[2];
-//                    movies = dateBPTree.search(Float.valueOf(stringToIntDate(a)), Float.valueOf(stringToIntDate(b)));
-//                } else {
-//                    movies = dateBPTree.search(Float.valueOf(stringToIntDate(a)));
-//                }
-//            } else if (s[0].equals("vote")) {
-//                System.out.println("Обработка...");
-//                if (s.length < 2) {
-//                    System.out.println("Некорректный ввод");
-//                    continue;
-//                }
-//                String a = s[1];
-//                if (s.length >= 3) {
-//                    String b = s[2];
-//                    movies = voteBPTree.search(Float.valueOf(a), Float.valueOf(b));
-//                } else {
-//                    movies = voteBPTree.search(Float.valueOf(a));
-//                }
-//            } else if (s[0].equals("date-vote")) {
-//                System.out.println("Обработка...");
-//                if (s.length < 3) {
-//                    System.out.println("Некорректный ввод");
-//                    continue;
-//                }
-//                int count = 2;
-//                String a = s[1];
-//                String b = s[2];
-//                String c = null;
-//                String d = null;
-//                if (s.length >= 4) {
-//                    c = s[3];
-//                    count++;
-//                }
-//                if (s.length == 5) {
-//                    d = s[4];
-//                    count++;
-//                }
-//
-//                if (count == 2) {
-//                    c = b;
-//                    d = b;
-//                    a = String.valueOf(stringToIntDate(a));
-//                    b = a; //aabb
-//                } else if (count == 3) {
-//                    if (String.valueOf(b).length() < 8) {
-//                        d = c;
-//                        c = b;
-//                        a = String.valueOf(stringToIntDate(a));
-//                        b = a; //aabc
-//                    } else {
-//                        d = c; //abcc
-//                        a = String.valueOf(stringToIntDate(a));
-//                        b = String.valueOf(stringToIntDate(b));
-//                    }
-//                }
-//
-//                movies = getMoviesFromBothCols(Float.valueOf(a), Float.valueOf(b),
-//                        Float.valueOf(c), Float.valueOf(d), dateBPTree, voteBPTree);
-//            }
-//            if (movies != null && movies.isEmpty()) {
-//                System.out.println("Фильмов не найдено");
-//            } else if (movies != null) {
-//                System.out.println(movies);
-//            }
-//        }
+        boolean stopped = false;
+        while (true) {
+            String str = scanner.nextLine();
+            if (str.equalsIgnoreCase("stop")) {
+                break;
+            }
+            String[] s = str.split(" ");
+            System.out.println();
+            ArrayList<Integer> movies = null;
+            if (s[0].equals("date")) {
+                System.out.println("Обработка...");
+                if (s.length < 2) {
+                    System.out.println("Некорректный ввод");
+                    continue;
+                }
+                String a = s[1];
+                if (s.length >= 3) {
+                    String b = s[2];
+                    movies = dateBPTree.search(Float.valueOf(stringToIntDate(a)), Float.valueOf(stringToIntDate(b)));
+                } else {
+                    movies = dateBPTree.search(Float.valueOf(stringToIntDate(a)));
+                }
+            } else if (s[0].equals("vote")) {
+                System.out.println("Обработка...");
+                if (s.length < 2) {
+                    System.out.println("Некорректный ввод");
+                    continue;
+                }
+                String a = s[1];
+                if (s.length >= 3) {
+                    String b = s[2];
+                    movies = voteBPTree.search(Float.valueOf(a), Float.valueOf(b));
+                } else {
+                    movies = voteBPTree.search(Float.valueOf(a));
+                }
+            } else if (s[0].equals("date-vote")) {
+                System.out.println("Обработка...");
+                if (s.length < 3) {
+                    System.out.println("Некорректный ввод");
+                    continue;
+                }
+                int count = 2;
+                String a = s[1];
+                String b = s[2];
+                String c = null;
+                String d = null;
+                if (s.length >= 4) {
+                    c = s[3];
+                    count++;
+                }
+                if (s.length == 5) {
+                    d = s[4];
+                    count++;
+                }
+
+                if (count == 2) {
+                    c = b;
+                    d = b;
+                    a = String.valueOf(stringToIntDate(a));
+                    b = a; //aabb
+                } else if (count == 3) {
+                    if (String.valueOf(b).length() < 8) {
+                        d = c;
+                        c = b;
+                        a = String.valueOf(stringToIntDate(a));
+                        b = a; //aabc
+                    } else {
+                        d = c; //abcc
+                        a = String.valueOf(stringToIntDate(a));
+                        b = String.valueOf(stringToIntDate(b));
+                    }
+                }
+
+                movies = getMoviesFromBothCols(Float.valueOf(a), Float.valueOf(b),
+                        Float.valueOf(c), Float.valueOf(d), dateBPTree, voteBPTree);
+            }
+            if (movies != null && movies.isEmpty()) {
+                System.out.println("Фильмов не найдено");
+            } else if (movies != null) {
+                System.out.println(movies);
+            } else {
+                System.out.println("Список null");
+            }
+        }
     }
 
     private static Integer stringToIntDate(String dateString) {
